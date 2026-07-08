@@ -1,11 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+
+    <title>TaskFlow - Todo App</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link 
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" 
+    rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
 </head>
+
+
 <body>
-    <h1>todo-app</h1>
+
+
+<div class="app-container">
+
+
+    <!-- Header -->
+
+    <header class="header">
+
+        <div>
+            <h1>TaskFlow</h1>
+            <p>Manage your tasks smarter</p>
+        </div>
+
+
+        <div class="date-box">
+            <span id="currentDate"></span>
+        </div>
+
+    </header>
+
+
+
+    <!-- Progress Section -->
+
+    <section class="progress-card">
+
+        <div class="progress-info">
+
+            <h3>Today's Progress</h3>
+
+            <span id="progressText">
+                0%
+            </span>
+
+        </div>
+
+
+        <div class="progress-bar">
+
+            <div id="progressFill"></div>
+
+        </div>
+
+
+        <div class="counter">
+
+            <span>
+                Total:
+                <b id="totalTasks">0</b>
+            </span>
+
+
+            <span>
+                Completed:
+                <b id="completedTasks">0</b>
+            </span>
+
+
+        </div>
+
+
+    </section>
+
+ <!-- Add Task Card -->
+
+
+    <section class="task-input-card">
+
+
+        <input 
+        type="text"
+        id="taskInput"
+        placeholder="Enter your task...">
+
+
+
+        <input 
+        type="date"
+        id="dueDate">
+
+
+
+        <select id="priority">
+
+            <option value="High">
+                High
+            </option>
+
+            <option value="Medium">
+                Medium
+            </option>
+
+            <option value="Low">
+                Low
+            </option>
+
+        </select>
+
+
+ <input 
+        type="text"
+        id="category"
+        placeholder="Category">
+
+
+
+        <button id="addBtn">
+            Add Task
+        </button>
+
+
+    </section>
+
+    <!-- Search and Filters -->
+
+
+<section class="controls">
+
+
+        <input 
+        type="search"
+        id="searchInput"
+        placeholder="Search tasks...">
+
+ <div class="filters">
+
+
+            <button class="filter active" data-filter="all">
+                All
+            </button>
+
+
+            <button class="filter" data-filter="active">
+                Active
+            </button>
+
+
+            <button class="filter" data-filter="completed">
+                Completed
+            </button>
+
+</div>
+
+    </section>
+
+<!-- Task List -->
+
+<section id="taskList" class="task-list">
+
+
+    </section>
+
+<!-- Empty State -->
+
+    <div id="emptyState" class="empty-state">
+
+
+        <h2>
+            🎯 No Tasks Found
+        </h2>
+
+        <p>
+            Add your first task and start being productive.
+        </p>
+
+
+    </div>
+
+<!-- Footer Buttons -->
+
+ <div class="bottom-actions">
+
+
+        <button id="clearCompleted">
+            Clear Completed
+        </button>
+
+
+    </div>
+
+</div>
+
+<!-- JavaScript -->
+
+<script src="js/script.js"></script>
+
+
 </body>
+
 </html>
