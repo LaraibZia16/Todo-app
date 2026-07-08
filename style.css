@@ -1,0 +1,640 @@
+/* ==========================
+   Global Reset
+========================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family: 'Poppins', sans-serif;
+
+    background: linear-gradient(
+        135deg,
+        #1b1022,
+        #462255
+    );
+
+    min-height: 100vh;
+
+    color: white;
+
+    padding: 30px;
+
+}
+
+
+/* ==========================
+   Main Container
+========================== */
+
+
+.app-container {
+
+    max-width: 1100px;
+
+    margin: auto;
+
+}
+
+
+/* ==========================
+   Header
+========================== */
+
+
+.header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+
+}
+
+
+.header h1 {
+
+    font-size: 40px;
+
+    font-weight: 700;
+
+}
+
+
+.header p {
+
+    color: #d8c8e0;
+
+}
+
+
+
+.date-box {
+
+    background: rgba(255,255,255,0.12);
+
+    padding: 15px 20px;
+
+    border-radius: 15px;
+
+    backdrop-filter: blur(10px);
+
+}
+
+
+
+/* ==========================
+   Cards
+========================== */
+
+
+.progress-card,
+.task-input-card {
+
+    background: rgba(255,255,255,0.12);
+
+    backdrop-filter: blur(15px);
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    margin-bottom: 25px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.25);
+
+}
+
+
+/* ==========================
+   Progress
+========================== */
+
+
+.progress-info {
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:15px;
+
+}
+
+
+
+.progress-bar {
+
+    width:100%;
+
+    height:14px;
+
+    background:#2b1933;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+
+
+#progressFill {
+
+    height:100%;
+
+    width:0%;
+
+    background:#d9a7ff;
+
+    transition:.5s;
+
+}
+
+
+
+
+.counter {
+
+    margin-top:15px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    color:#ddd;
+
+}
+
+
+
+/* ==========================
+   Inputs
+========================== */
+
+
+.task-input-card {
+
+    display:grid;
+
+    grid-template-columns:
+    2fr 1fr 1fr 1fr auto;
+
+    gap:15px;
+
+}
+
+
+
+input,
+select {
+
+
+    padding:14px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:12px;
+
+    background:#fff;
+
+    color:#333;
+
+    font-size:14px;
+
+}
+
+
+
+button {
+
+
+    border:none;
+
+    cursor:pointer;
+
+    border-radius:12px;
+
+    padding:12px 20px;
+
+    background:#d9a7ff;
+
+    color:#2b1235;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+
+
+button:hover {
+
+    transform:translateY(-3px);
+
+    opacity:.9;
+
+}
+
+/* ==========================
+   Controls
+========================== */
+
+
+.controls {
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:25px;
+
+}
+
+
+
+#searchInput {
+
+    flex:1;
+
+}
+
+
+
+
+.filters {
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+
+
+.filter {
+
+    background:#32163d;
+
+    color:white;
+
+}
+
+
+
+.filter.active {
+
+    background:#d9a7ff;
+
+    color:#32163d;
+
+}
+
+/* ==========================
+   Task Cards
+========================== */
+
+
+.task-list {
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+
+}
+
+
+
+
+.task-card {
+
+
+    background:white;
+
+    color:#333;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    animation:slide .4s ease;
+
+    cursor:grab;
+
+}
+
+
+
+@keyframes slide {
+
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+
+
+.task-left {
+
+    display:flex;
+
+    gap:15px;
+
+    align-items:center;
+
+}
+
+
+
+
+.task-left h3 {
+
+    font-size:18px;
+
+}
+
+
+
+.task-left p {
+
+    font-size:13px;
+
+    color:#777;
+
+}
+
+
+
+
+.completed h3 {
+
+    text-decoration:line-through;
+
+    opacity:.5;
+
+}
+
+
+
+
+
+.priority {
+
+    padding:5px 12px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+
+.high {
+
+    background:#ffb3b3;
+
+}
+
+
+.medium {
+
+    background:#ffe7a3;
+
+}
+
+
+.low {
+
+    background:#b8f5c1;
+
+}
+
+
+
+
+
+.task-actions button {
+
+    margin-left:8px;
+
+    padding:8px 12px;
+
+}
+
+
+
+.edit {
+
+    background:#8dc8ff;
+
+}
+
+
+
+.delete {
+
+    background:#ff8c8c;
+
+}
+
+/* ==========================
+   Empty State
+========================== */
+
+
+.empty-state {
+
+
+    text-align:center;
+
+    padding:50px;
+
+    background:rgba(255,255,255,.1);
+
+    border-radius:20px;
+
+}
+
+
+
+.empty-state p {
+
+    color:#ddd;
+
+    margin-top:10px;
+
+}
+
+
+/* ==========================
+   Bottom Button
+========================== */
+
+
+.bottom-actions {
+
+    text-align:center;
+
+    margin-top:25px;
+
+}
+
+
+
+#clearCompleted {
+
+    background:#ff8c8c;
+
+}
+
+
+/* ==========================
+   Responsive Design
+========================== */
+
+
+@media(max-width:900px){
+
+
+.task-input-card {
+
+
+    grid-template-columns:1fr;
+
+}
+
+
+.controls {
+
+
+    flex-direction:column;
+
+}
+
+
+
+.filters {
+
+    width:100%;
+
+    justify-content:center;
+
+}
+
+
+
+}
+
+
+
+@media(max-width:600px){
+
+
+body {
+
+    padding:15px;
+
+}
+
+
+
+.header {
+
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+}
+
+
+
+.header h1 {
+
+    font-size:32px;
+
+}
+
+
+
+.task-card {
+
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+}
+
+
+
+.task-actions {
+
+    width:100%;
+
+}
+
+
+
+.task-actions button {
+
+    width:48%;
+
+}
+
+
+.counter {
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+
+}
