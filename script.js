@@ -1,20 +1,15 @@
-// ===============================
+// ===========================
 // Select Elements
-// ===============================
+// ===========================
 
-
+const taskForm = document.getElementById("taskForm");
 const taskInput = document.getElementById("taskInput");
 const dueDate = document.getElementById("dueDate");
 const priority = document.getElementById("priority");
 const category = document.getElementById("category");
 
-const addBtn = document.getElementById("addBtn");
-
 const taskList = document.getElementById("taskList");
-
 const searchInput = document.getElementById("searchInput");
-
-const filters = document.querySelectorAll(".filter");
 
 const totalTasks = document.getElementById("totalTasks");
 const completedTasks = document.getElementById("completedTasks");
@@ -22,667 +17,372 @@ const completedTasks = document.getElementById("completedTasks");
 const progressFill = document.getElementById("progressFill");
 const progressText = document.getElementById("progressText");
 
-const emptyState = document.getElementById("emptyState");
+const greeting = document.getElementById("greeting");
+const todayDate = document.getElementById("todayDate");
 
+const emptyState = document.getElementById("emptyState");
 const clearCompleted = document.getElementById("clearCompleted");
 
-const currentDate = document.getElementById("currentDate");
+const filters = document.querySelectorAll(".filter");
 
+// ===========================
+// Variables
+// ===========================
 
-// ===============================
-// Current Date
-// ===============================
-
-
-currentDate.innerText =
-new Date().toDateString();
-
-
-// ===============================
-// Load Tasks
-// ===============================
-
-
-let tasks = JSON.parse(
-localStorage.getItem("tasks")
-) || [];
-
-
-
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 let currentFilter = "all";
+let editTaskId = null;
 
-let editId = null;
+// ===========================
+// Greeting & Date
+// ===========================
 
+showGreeting();
+displayDate();
 
+function showGreeting() {
 
-// Initial Render
+    const hour = new Date().getHours();
 
-renderTasks();
+    if (hour < 12) {
+        greeting.textContent = "Good Morning ☀️";
+    } else if (hour < 18) {
+        greeting.textContent = "Good Afternoon 🌤";
+    } else {
+        greeting.textContent = "Good Evening 🌙";
+    }
 
-// ===============================
+}
+
+function displayDate() {
+
+    const options = {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    };
+
+    todayDate.textContent = new Date().toLocaleDateString("en-US", options);
+
+}
+
+// ===========================
 // Add / Update Task
-// ===============================
+// ===========================
 
+taskForm.addEventListener("submit", function (e) {
 
-addBtn.addEventListener("click",()=>{
+    e.preventDefault();
 
+    const title = taskInput.value.trim();
 
-    const text = taskInput.value.trim();
-
-
-    if(text === ""){
-
-        alert("Please enter a task");
-
+    if (title === "") {
+        alert("Please enter a task.");
         return;
-
     }
 
+    if (editTaskId) {
 
+        const task = tasks.find(item => item.id === editTaskId);
 
-    if(editId){
+        task.title = title;
+        task.date = dueDate.value;
+        task.priority = priority.value;
+        task.category = category.value;
 
-        tasks = tasks.map(task=>{
+        editTaskId = null;
 
-            if(task.id === editId){
+        document.getElementById("addTaskBtn").innerHTML =
+            '<i class="fa-solid fa-plus"></i> Add Task';
 
-                return {
+    } else {
 
-                    ...task,
+        const newTask = {
 
-                    text:text,
+            id: Date.now(),
 
-                    date:dueDate.value,
+            title: title,
 
-                    priority:priority.value,
+            date: dueDate.value,
 
-                    category:category.value
+            priority: priority.value,
 
-                }
+            category: category.value,
 
-            }
-
-            return task;
-
-        });
-
-
-        editId=null;
-
-        addBtn.innerText="Add Task";
-
-
-    }
-
-    else{
-
-
-        const newTask={
-
-
-            id:Date.now(),
-
-            text:text,
-
-            date:dueDate.value,
-
-            priority:priority.value,
-
-            category:category.value,
-
-            completed:false
-
+            completed: false
 
         };
 
-
         tasks.push(newTask);
 
-
     }
-
-
 
     saveTasks();
-
-
-    renderTasks();
-
-
-
-    clearInputs();
-
-
+    clearForm();
+    displayTasks();
 
 });
 
+// ===========================
+// Helper Functions
+// ===========================
 
-// ===============================
-// Clear Inputs
-// ===============================
+function clearForm() {
 
-
-function clearInputs(){
-
-
-taskInput.value="";
-
-dueDate.value="";
-
-category.value="";
-
-priority.value="High";
-
+    taskInput.value = "";
+    dueDate.value = "";
+    priority.value = "High";
+    category.value = "";
 
 }
 
-// ===============================
-// Save Local Storage
-// ===============================
+function saveTasks() {
 
-
-function saveTasks(){
-
-
-localStorage.setItem(
-"tasks",
-JSON.stringify(tasks)
-);
-
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 
 }
 
+// ===========================
+// Initial Load
+// ===========================
 
-// ===============================
-// Render Tasks
-// ===============================
+displayTasks();
+// ===========================
+// Display Tasks
+// ===========================
 
+function displayTasks() {
 
-function renderTasks(){
+    taskList.innerHTML = "";
 
+    let filteredTasks = [...tasks];
 
-taskList.innerHTML="";
+    // Search
+    const searchValue = searchInput.value.toLowerCase();
 
+    filteredTasks = filteredTasks.filter(task =>
+        task.title.toLowerCase().includes(searchValue)
+    );
 
-
-let filteredTasks = tasks.filter(task=>{
-
-
-    if(currentFilter==="completed"){
-
-        return task.completed;
-
+    // Filter
+    if (currentFilter === "active") {
+        filteredTasks = filteredTasks.filter(task => !task.completed);
     }
 
-
-    if(currentFilter==="active"){
-
-        return !task.completed;
-
+    if (currentFilter === "completed") {
+        filteredTasks = filteredTasks.filter(task => task.completed);
     }
 
+    // Empty State
+    if (filteredTasks.length === 0) {
+        emptyState.style.display = "block";
+        taskList.style.display = "none";
+    } else {
+        emptyState.style.display = "none";
+        taskList.style.display = "flex";
+    }
 
-    return true;
+    filteredTasks.forEach(task => {
 
+        const card = createTaskCard(task);
 
-});
+        taskList.appendChild(card);
 
+    });
 
-const searchValue =
-searchInput.value.toLowerCase();
-
-
-
-filteredTasks =
-filteredTasks.filter(task=>{
-
-
-return task.text
-.toLowerCase()
-.includes(searchValue);
-
-
-
-});
-
-if(filteredTasks.length===0){
-
-
-emptyState.style.display="block";
-
+    updateProgress();
 
 }
 
-else{
+// ===========================
+// Create Task Card
+// ===========================
 
+function createTaskCard(task) {
 
-emptyState.style.display="none";
+    const card = document.createElement("div");
 
+    card.className = "task-card";
+
+    if (task.completed) {
+        card.classList.add("completed");
+    }
+
+    card.innerHTML = `
+
+    <div class="task-left">
+
+        <input type="checkbox" ${task.completed ? "checked" : ""}>
+
+        <div class="task-info">
+
+            <h3 class="task-title">${task.title}</h3>
+
+            <div class="task-details">
+
+                <span class="badge category">
+                    📂 ${task.category || "General"}
+                </span>
+
+                <span class="badge date">
+                    📅 ${task.date || "No Date"}
+                </span>
+
+                <span class="badge ${task.priority.toLowerCase()}">
+                    ${task.priority}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="task-actions">
+
+        <button class="edit-btn">
+            <i class="fa-solid fa-pen"></i>
+        </button>
+
+        <button class="delete-btn">
+            <i class="fa-solid fa-trash"></i>
+        </button>
+
+    </div>
+
+    `;
+
+    // Complete Task
+    card.querySelector("input").addEventListener("change", function () {
+
+        task.completed = this.checked;
+
+        saveTasks();
+
+        displayTasks();
+
+    });
+
+    // Delete Task
+    card.querySelector(".delete-btn").addEventListener("click", function () {
+
+        tasks = tasks.filter(item => item.id !== task.id);
+
+        saveTasks();
+
+        displayTasks();
+
+    });
+
+    // Edit Task
+    card.querySelector(".edit-btn").addEventListener("click", function () {
+
+        taskInput.value = task.title;
+        dueDate.value = task.date;
+        priority.value = task.priority;
+        category.value = task.category;
+
+        editTaskId = task.id;
+
+        document.getElementById("addTaskBtn").innerHTML =
+            '<i class="fa-solid fa-pen"></i> Update Task';
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    });
+
+    return card;
 
 }
 
-filteredTasks.forEach(task=>{
-
-
-const card=document.createElement("div");
-
-
-card.className =
-"task-card " +
-(task.completed ? "completed":"");
-
-
-
-card.draggable=true;
-
-
-
-card.dataset.id=task.id;
-
-
-
-
-card.innerHTML=`
-
-<div class="task-left">
-
-
-<input 
-type="checkbox"
-${task.completed ? "checked":""}
-onchange="toggleComplete(${task.id})">
-
-
-<div>
-
-
-<h3>${task.text}</h3>
-
-
-<p>
-📅 ${task.date || "No Date"}
-<br>
-
-📂 ${task.category || "General"}
-
-</p>
-
-
-</div>
-
-
-
-</div>
-
-
-
-<div>
-
-
-<span class="priority ${task.priority.toLowerCase()}">
-
-${task.priority}
-
-</span>
-
-
-
-<div class="task-actions">
-
-
-<button 
-class="edit"
-onclick="editTask(${task.id})">
-
-Edit
-
-</button>
-
-
-
-<button
-class="delete"
-onclick="deleteTask(${task.id})">
-
-Delete
-
-</button>
-
-
-</div>
-
-
-
-</div>
-
-`;
-
-
-
-
-
-taskList.appendChild(card);
-
-
-
-});
-
-
-
-updateProgress();
-
-
-dragEvents();
-
-
-}
-
-
-// ===============================
-// Complete Task
-// ===============================
-
-
-function toggleComplete(id){
-
-
-tasks =
-tasks.map(task=>{
-
-
-if(task.id===id){
-
-
-task.completed =
-!task.completed;
-
-
-}
-
-
-return task;
-
-
-});
-
-
-
-saveTasks();
-
-renderTasks();
-
-
-}
-
-
-// ===============================
-// Delete Task
-// ===============================
-
-
-function deleteTask(id){
-
-
-tasks =
-tasks.filter(task=>task.id!==id);
-
-
-
-saveTasks();
-
-renderTasks();
-
-
-}
-
-// ===============================
-// Edit Task
-// ===============================
-
-
-function editTask(id){
-
-
-const task =
-tasks.find(task=>task.id===id);
-
-
-
-taskInput.value=task.text;
-
-dueDate.value=task.date;
-
-priority.value=task.priority;
-
-category.value=task.category;
-
-
-
-editId=id;
-
-
-
-addBtn.innerText="Update Task";
-
-
-window.scrollTo({
-
-top:0,
-
-behavior:"smooth"
-
-});
-
-
-}
-
-// ===============================
-// Search
-// ===============================
-
-
-searchInput.addEventListener(
-"input",
-()=>{
-
-renderTasks();
-
-});
-
-// ===============================
-// Filters
-// ===============================
-
-
-filters.forEach(button=>{
-
-
-button.addEventListener("click",()=>{
-
-
-filters.forEach(btn=>{
-
-btn.classList.remove("active");
-
-});
-
-
-button.classList.add("active");
-
-
-currentFilter =
-button.dataset.filter;
-
-
-renderTasks();
-
-
-
-});
-
-
-});
-
-
-// ===============================
+// ===========================
 // Progress
-// ===============================
+// ===========================
 
+function updateProgress() {
 
-function updateProgress(){
+    const total = tasks.length;
 
+    const completed = tasks.filter(task => task.completed).length;
 
+    totalTasks.textContent = total;
 
-const total =
-tasks.length;
+    completedTasks.textContent = completed;
 
+    let percentage = 0;
 
+    if (total > 0) {
+        percentage = Math.round((completed / total) * 100);
+    }
 
-const completed =
-tasks.filter(
-task=>task.completed
-).length;
+    progressFill.style.width = percentage + "%";
 
-
-
-totalTasks.innerText=total;
-
-
-completedTasks.innerText=completed;
-
-
-
-let percentage =
-total===0
-?
-0
-:
-Math.round(
-(completed/total)*100
-);
-
-
-
-progressFill.style.width =
-percentage+"%";
-
-
-
-progressText.innerText =
-percentage+"%";
-
-
+    progressText.textContent = percentage + "%";
 
 }
+// ===========================
+// Search Tasks
+// ===========================
 
-// ===============================
-// Clear Completed
-// ===============================
+searchInput.addEventListener("input", displayTasks);
 
+// ===========================
+// Filter Tasks
+// ===========================
 
-clearCompleted.addEventListener(
-"click",
-()=>{
+filters.forEach(button => {
 
+    button.addEventListener("click", function () {
 
-tasks =
-tasks.filter(
-task=>!task.completed
-);
+        filters.forEach(btn => btn.classList.remove("active"));
 
+        this.classList.add("active");
 
-saveTasks();
+        currentFilter = this.dataset.filter;
 
-renderTasks();
+        displayTasks();
 
-
-});
-
-// ===============================
-// Drag & Drop
-// ===============================
-
-
-function dragEvents(){
-
-
-const cards =
-document.querySelectorAll(".task-card");
-
-
-
-let dragged;
-
-
-
-cards.forEach(card=>{
-
-
-card.addEventListener(
-"dragstart",
-()=>{
-
-
-dragged=card;
-
+    });
 
 });
 
+// ===========================
+// Clear Completed Tasks
+// ===========================
 
+clearCompleted.addEventListener("click", function () {
 
+    const completed = tasks.filter(task => task.completed);
 
-card.addEventListener(
-"dragover",
-e=>{
+    if (completed.length === 0) {
+        alert("No completed tasks found.");
+        return;
+    }
 
-e.preventDefault();
+    if (confirm("Delete all completed tasks?")) {
 
-});
+        tasks = tasks.filter(task => !task.completed);
 
+        saveTasks();
 
+        displayTasks();
 
-
-card.addEventListener(
-"drop",
-()=>{
-
-
-let from =
-tasks.findIndex(
-t=>t.id==dragged.dataset.id
-);
-
-
-
-let to =
-tasks.findIndex(
-t=>t.id==card.dataset.id
-);
-
-
-
-[
-tasks[from],
-tasks[to]
-
-]=
-[
-tasks[to],
-tasks[from]
-];
-
-
-
-saveTasks();
-
-renderTasks();
-
+    }
 
 });
 
+// ===========================
+// Save Before Closing
+// ===========================
 
+window.addEventListener("beforeunload", saveTasks);
 
-});
+// ===========================
+// Initial Display
+// ===========================
 
-
-}
+displayTasks();
